@@ -86,9 +86,9 @@ fn with_word_chords(catalog: AppCatalog) -> AppCatalog {
 
 /// The framework edit commands the app's engine commands of the same id run through: the linked set owns their
 /// definition, the engine owns their chords.
-const LINKED_EDIT: [craft::ui::runtime::commands::EditCommands; 3] = {
-    use craft::ui::runtime::commands::EditCommands::{Copy, Cut, Paste};
-    [Cut, Copy, Paste]
+const LINKED_EDIT: [craft::ui::runtime::commands::EditCommands; 5] = {
+    use craft::ui::runtime::commands::EditCommands::{Copy, Cut, Paste, Redo, Undo};
+    [Cut, Copy, Paste, Undo, Redo]
 };
 
 impl WordApp {
@@ -123,8 +123,8 @@ impl WordApp {
                 }
                 defs.push(def);
             }
-            // The framework's edit set defines Cut, Copy and Paste: a catalog def for them is shadowed (and warned
-            // about), so their chords go in as the set's replaced defaults (`with_word_chords`).
+            // The framework's edit set defines Cut, Copy, Paste, Undo and Redo: a catalog def for them is shadowed (and
+            // warned about), so their chords go in as the set's replaced defaults (the `LINKED_EDIT` fold below).
             for spec in registry.all().iter().filter(|spec| seen.insert(spec.id) && !LINKED_EDIT.iter().any(|c| c.id() == spec.id)) {
                 let mut def = CommandDef::new(CommandRef::new(spec.id), tl!(spec.label), Scope::app());
                 for binding in default_bindings(spec.shortcut) {
